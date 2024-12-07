@@ -1,0 +1,21 @@
+Package: processactivefires
+Title: Process fire data into a format usable by a metereological model
+Version: 0.0.0.9000
+Authors@R: 
+    person("Alber", "Sánchez", , "alber.ipia@inpe.br", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7966-2880"))
+Description: Process fire data into a format usable by a metereological model.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Suggests:
+    testthat (>= 3.0.0),
+Config/testthat/edition: 3
+Imports:
+    ncdf4,
+    dplyr,
+    lubridate,
+    stringr,
+    tidyr,
+    tidyselect
