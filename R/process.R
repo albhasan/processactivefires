@@ -17,7 +17,13 @@
 #'
 process_data <- function(x, adate, file_out, var_names, fire_codes = 7:9) {
   # Open the given file
-  nc <- ncdf4::nc_open(x)
+  nc <- ncdf4::nc_open(x, return_on_error = TRUE)
+  if (nc[["error"]]) {
+    # ncdf4::nc_close(nc)
+    rm(nc)
+    gc()
+    stop(sprintf("Unable to open %s", x))
+  }
   # Read data
   data_ls <- lapply(var_names, function(x) {
     ncdf4::ncvar_get(nc, x)
@@ -34,7 +40,7 @@ process_data <- function(x, adate, file_out, var_names, fire_codes = 7:9) {
   data_df <- as.data.frame(data_ls[var_names[1:2]])
   # Check if the given file actually contains fires
   if (n_rows == 0) {
-    return("WARNING: No data found!")
+    return(sprintf("WARNING: No data found in %s", x))
   }
   # Get the fires
   for (v in var_names[3:length(var_names)]) {

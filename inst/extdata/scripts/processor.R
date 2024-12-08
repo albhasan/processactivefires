@@ -6,7 +6,7 @@
 # Rscript --vanilla processor.R --file /home/alber/Documents/inpe/people/guilherme/netcdf_to_txt/750/VNP14.A2015248.0048.002.2023145142000.nc --resolution 750 --out /home/alber/Downloads/ncdf2txt
 #
 # Example using GNU parallel:
-# find /home/alber/Documents/inpe/people/guilherme/netcdf_to_txt/750 -type f -iname "*.nc" | parallel -j2 Rscript --vanilla ./processor.R --resolution 750 --out /home/alber/Downloads/ncdf2txt --file {}
+# find /home/alber/Documents/inpe/people/guilherme/netcdf_to_txt/750 -type f -iname "*.nc" | parallel -j16 Rscript --vanilla ./processor.R --resolution 750 --out /home/alber/Downloads/ncdf2txt --file {}
 ##############################################################################
 
 
@@ -34,7 +34,7 @@ option_list <- list(
     help = "Spatial resolution of the given file. Either 375 or 750."
   ),
   optparse::make_option(
-    opt_str =  "--out",
+    opt_str = "--out",
     type = "character",
     metavar = "character",
     default = NULL,
@@ -45,26 +45,33 @@ option_list <- list(
 opt_parser <- optparse::OptionParser(option_list = option_list)
 opt <- optparse::parse_args(opt_parser)
 
-if (!("file" %in% names(opt)))
+if (!("file" %in% names(opt))) {
   stop("Missing file option!")
+}
 file_in <- opt[["file"]]
-if (!file.exists(file_in))
+if (!file.exists(file_in)) {
   stop("Input file not found!")
+}
 
-if (!("out" %in% names(opt)))
+if (!("out" %in% names(opt))) {
   stop("Invalid output directory option!")
+}
 out_dir <- opt[["out"]]
-if (!dir.exists(out_dir))
+if (!dir.exists(out_dir)) {
   stop("Output directory not found!")
+}
 
-if (!("resolution" %in% names(opt)))
+if (!("resolution" %in% names(opt))) {
   stop("Unknown resolution!")
+}
 res <- opt[["resolution"]]
-if (!(res %in% c(375, 750)))
+if (!(res %in% c(375, 750))) {
   stop("Invalid resolution! Valid values are either 375 or 750.")
+}
 var_names <- processactivefires:::VAR.NAMES.375
-if (res == 750)
+if (res == 750) {
   var_names <- processactivefires:::VAR.NAMES.750
+}
 
 
 
@@ -73,16 +80,18 @@ if (res == 750)
 data_df <- processactivefires::get_file_metadata(file_in)
 out_dir <- file.path(out_dir, as.character(as.Date(data_df[["adate"]])))
 
-if (!dir.exists(out_dir))
+if (!dir.exists(out_dir)) {
   dir.create(out_dir)
+}
 
 file_out <- file.path(
   out_dir,
   paste0(tools::file_path_sans_ext(basename(file_in)), ".txt")
 )
 
-if (file.exists(file_out))
+if (file.exists(file_out)) {
   stop("Output file already exists!")
+}
 
 processactivefires::process_data(
   x = file_in,
