@@ -77,8 +77,17 @@ if (res == 750) {
 
 #---- Process file ----
 
-data_df <- processactivefires::get_file_metadata(file_in)
-out_dir <- file.path(out_dir, as.character(as.Date(data_df[["adate"]])))
+stopifnot("Only one file was expected!" = length(file_in) == 1)
+
+data_df <-
+  file_in |>
+  processactivefires::get_file_metadata() |>
+  dplyr::mutate(
+    y = lubridate::year(adate),
+    yday = lubridate::yday(adate)
+  )
+
+out_dir <- file.path(out_dir, data_df[["y"]], data_df[["yday"]])
 
 if (!dir.exists(out_dir)) {
   dir.create(out_dir)
