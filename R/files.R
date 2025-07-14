@@ -33,5 +33,5 @@ get_file_metadata <- function(x) {
       adate = stringr::str_sub(adate, start = 2L),
       adate = lubridate::parse_date_time(adate, "%Y%j%H%M"),
     )
-    return(res)
+  return(res)
 }
