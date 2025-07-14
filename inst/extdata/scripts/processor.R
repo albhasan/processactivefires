@@ -87,7 +87,11 @@ data_df <-
     yday = lubridate::yday(adate)
   )
 
-out_dir <- file.path(out_dir, data_df[["y"]], data_df[["yday"]])
+out_dir <- file.path(
+  out_dir,
+  data_df[["y"]],
+  stringr::str_pad(string = data_df[["yday"]], width = 3, pad = "0")
+)
 
 if (!dir.exists(out_dir)) {
   dir.create(out_dir)
